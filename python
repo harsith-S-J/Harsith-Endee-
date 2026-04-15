@@ -1,0 +1,26 @@
+import json
+from sentence_transformers import SentenceTransformer
+from database import get_endee_client, setup_collection
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+client = get_endee_client()
+coll = setup_collection(client)
+
+# Example Data
+farming_data = [
+    {"id": "1", "text": "Crop rotation helps prevent soil depletion and pests.", "crop": "General"},
+    {"id": "2", "text": "Tomatoes require well-drained soil and 6-8 hours of sunlight.", "crop": "Tomato"}
+]
+
+def run_ingestion():
+    for item in farming_data:
+        vector = model.encode(item['text']).tolist()
+        client.upsert(
+            collection_name=coll,
+            vectors=[vector],
+            metadata=[item]
+        )
+    print("✅ Farming data ingested into Endee!")
+
+if __name__ == "__main__":
+    run_ingestion()
