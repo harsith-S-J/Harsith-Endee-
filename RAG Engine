@@ -6,10 +6,10 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 client = get_endee_client()
 
 def ask_agri_intel(query):
-    # 1. Embed the query
+ 
     query_vector = model.encode(query).tolist()
 
-    # 2. Search Endee
+ 
     results = client.search(
         collection_name="agri_docs",
         vector=query_vector,
@@ -18,7 +18,6 @@ def ask_agri_intel(query):
 
     context = results[0]['metadata']['text'] if results else "No context found."
     
-    # 3. Simple RAG Output (LLM integration point)
     print(f"\n--- Agri-Intel Result ---")
     print(f"Query: {query}")
     print(f"Context found in Endee: {context}")
