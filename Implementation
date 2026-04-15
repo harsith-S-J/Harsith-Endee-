@@ -1,0 +1,14 @@
+from endee import Client
+
+def get_endee_client():
+    # Connects to the local Endee instance
+    return Client(host="localhost", port=8000)
+
+def setup_collection(client, collection_name="agri_docs"):
+    if collection_name not in client.list_collections():
+        client.create_collection(
+            name=collection_name,
+            dimension=384,  # Matches sentence-transformers
+            metric="cosine"
+        )
+    return collection_name
