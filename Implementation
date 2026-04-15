@@ -1,7 +1,6 @@
 from endee import Client
 
 def get_endee_client():
-    # Connects to the local Endee instance
     return Client(host="localhost", port=8000)
 
 def setup_collection(client, collection_name="agri_docs"):
