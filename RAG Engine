@@ -1,0 +1,31 @@
+import argparse
+from sentence_transformers import SentenceTransformer
+from database import get_endee_client
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+client = get_endee_client()
+
+def ask_agri_intel(query):
+    # 1. Embed the query
+    query_vector = model.encode(query).tolist()
+
+    # 2. Search Endee
+    results = client.search(
+        collection_name="agri_docs",
+        vector=query_vector,
+        limit=2
+    )
+
+    context = results[0]['metadata']['text'] if results else "No context found."
+    
+    # 3. Simple RAG Output (LLM integration point)
+    print(f"\n--- Agri-Intel Result ---")
+    print(f"Query: {query}")
+    print(f"Context found in Endee: {context}")
+    print(f"AI Advice: Based on the guide, you should remember that {context.lower()}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--query", type=str, required=True)
+    args = parser.parse_args()
+    ask_agri_intel(args.query)
